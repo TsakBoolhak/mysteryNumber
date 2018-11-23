@@ -1,5 +1,7 @@
 package com.ocr.aurelien;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
@@ -41,14 +43,14 @@ public class RunGame {
      */
     public void displayResult(int nbDifficulty, int nbMystery, int nbScore) {
         int nbMax = returnNbMax(nbDifficulty);
-        String strCoups = new String("");
+        String strCoups = "coups";
+        String strNbMax = getFormattedStringFromInt(nbMax);
+        String strNbMystery = getFormattedStringFromInt(nbMystery);
+        String strNbScore = getFormattedStringFromInt(nbScore);
         if (nbScore == 1) {
             strCoups = "coup";
         }
-        else {
-            strCoups = "coups";
-        }
-        System.out.println("Bravo!! Vous deviez trouver un nombre compris entre 0 et " + nbMax + ".\nVous avez deviné que j'avais choisi le nombre " + nbMystery + " en seulement " + nbScore + " " + strCoups + " !");
+        System.out.println("Bravo!! Vous deviez trouver un nombre compris entre 0 et " + strNbMax + ".\nVous avez deviné que j'avais choisi le nombre " + strNbMystery + " en seulement " + strNbScore + " " + strCoups + " !");
     }
 
     /**
@@ -62,22 +64,24 @@ public class RunGame {
         int nbScore = 0;
         int nbAnswer = -1;
         int nbMax = returnNbMax(nbDifficulty);
+        String strNbMax = getFormattedStringFromInt(nbMax);
         do {
-            System.out.println("Le nombre mystère est compris entre 0 et " + nbMax + " (inclus).\nEssayez de le deviner (Tapez votre réponse)");
+            System.out.println("Le nombre mystère est compris entre 0 et " + strNbMax + " (inclus).\nEssayez de le deviner (Tapez votre réponse)");
             nbAnswer = getIntFromInput();
+            String strNbAnswer = getFormattedStringFromInt(nbAnswer);
             nbScore++;
             if (nbAnswer > nbMax || nbAnswer < 0) {
-                System.out.println("Voyons!! Le nombre ne peut être compris qu'entre 0 et " + nbMax + " !\n (Cette réponse ne sera pas prise en compte pour votre score)");
+                System.out.println("Voyons!! Le nombre ne peut être compris qu'entre 0 et " + strNbMax + " !\n (Cette réponse ne sera pas prise en compte pour votre score)");
                 nbScore--;
             }
             else if (nbMystery > nbAnswer) {
-                System.out.println("Le nombre mystère est plus GRAND que " + nbAnswer + " !");
+                System.out.println("Le nombre mystère est plus GRAND que " + strNbAnswer + " !");
             }
             else if (nbMystery < nbAnswer) {
-                System.out.println("Le nombre mystère est plus PETIT que " + nbAnswer + " !");
+                System.out.println("Le nombre mystère est plus PETIT que " + strNbAnswer + " !");
             }
             else {
-                System.out.println("OUI!! Le nombre mystère est bien " + nbAnswer + " !");
+                System.out.println("OUI!! Le nombre mystère est bien " + strNbAnswer + " !");
             }
         } while (nbMystery != nbAnswer);
         return nbScore;
@@ -159,14 +163,29 @@ public class RunGame {
     public int getIntFromInput() {
         int nbContinue = -1;
         try {
+            sc.useDelimiter("\n");
             nbContinue = sc.nextInt();
         } catch (InputMismatchException e) {
             sc.next();
-            System.out.println("Votre réponse doit être un nombre correspondant à votre choix. (Je ne comprend pas si vous l'ecrivez en toutes lettres)");
+            System.out.println("Votre réponse doit être un nombre correspondant à votre choix.\n(Je ne comprend pas si vous l'ecrivez en toutes lettres ou si vous mettez un espace)");
         }
         return nbContinue;
     }
 
+    /**
+     * Get a formatted string from an int to separate each thousands by a space (exemple : value = 15000, formattedValue = "15 000")
+     * @param value is the int passed to the method
+     * @return the value under a formatted string
+     */
+    public String getFormattedStringFromInt(int value) {
+        String formattedValue = new String("");
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator(' ');
+        String pattern = "###,###";
+        DecimalFormat decimalFormat = new DecimalFormat(pattern, symbols);
+        formattedValue = decimalFormat.format(value);
+        return formattedValue;
+    }
     /**
      * Ask user if he wants to continue
      * @return the answer as a boolean

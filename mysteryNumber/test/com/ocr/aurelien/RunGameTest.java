@@ -66,4 +66,10 @@ public class RunGameTest {
         assertEquals("Votre réponse doit être un nombre correspondant à votre choix!", output[3]);
         assertEquals("Voulez vous continuer à jouer?", output[6]);
     }
+    @Test
+    public void Given_Value_When_GetFormattedStringFromInt_Then_DisplayTheFormattedValue() {
+        runGame = new RunGame();
+        System.out.println(runGame.getFormattedStringFromInt(1500));
+        assertEquals("1 500\n", outContent.toString().replace("\r\n", "\n"));
+    }
 }
